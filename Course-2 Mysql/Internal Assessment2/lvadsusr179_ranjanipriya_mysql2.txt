@@ -1,0 +1,53 @@
+1. CREATE OR REPLACE VIEW second_one AS
+SELECT * FROM l1_maintenance_records where monthname(maintenance_date)='March';
+select * from second_one;
+select machine_id from second_one where cost>537 ;
+
+2. select maintenance_type,count(maintenance_type) from  second_one group by maintenance_type;
+
+
+3. select technician_name, sum(cost) from  second_one group by technician_name;
+
+
+
+4.select avg(incident_count_pre_update-incident_count_post_update) as average_reduction from l2_updates;
+
+5.select update_id,user_feedback_score from l2_updates order by  user_feedback_score desc limit 1;
+select * from l2_updates order by  user_feedback_score desc limit 1;
+
+6.select product_id, incident_count_pre_update-incident_count_post_update as diff  from l2_updates order by diff desc limit 1 ;
+
+
+
+7.select p.patient_name, f.facility_name, v.reason_for_visit,t.outcome 
+from l3_patients p
+join l3_visits v on p.patient_id= v.patient_id
+join l3_treatments t on t.visit_id=v.visit_id
+join l3_facilities f on v.facility_id = f.facility_id;
+
+
+8.select f.facility_name, v.facility_id,count(v.facility_id) 
+from l3_visits v 
+join l3_facilities f on v.facility_id = f.facility_id
+ where reason_for_visit='Emergency' group by f.facility_id ;
+
+9. select p.insurance_provider, count(p.insurance_provider)
+from l3_patients p
+join l3_visits v on p.patient_id= v.patient_id
+join l3_treatments t on t.visit_id=v.visit_id
+where t.outcome='Complicated' group by  p.insurance_provider ;
+
+10. CREATE OR REPLACE VIEW l4_sales1 AS select * from l4_sales where monthname(sale_date)='March';
+select * from l4_sales1;
+select p.product_name, p.category, sa.quantity from 
+l4_products p
+join l4_sales1 sa on sa.product_id = p.product_id 
+join l4_stores s on sa.store_id = s.store_id;
+
+11. CREATE OR REPLACE VIEW l4_sales2 AS select s.region, sa.sale_id, sa.product_id,sa.store_id, sa.sale_date,p.price*sa.quantity as total_sales
+from l4_sales sa join  l4_products p on sa.product_id = p.product_id join l4_stores s on sa.store_id = s.store_id  order by s.region desc ;
+select * from l4_sales2;
+
+select region,sum(total_sales) from l4_sales2  where monthname(sale_date)='March' group by  region;
+
+
