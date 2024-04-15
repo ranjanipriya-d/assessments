@@ -1,0 +1,42 @@
+1. select product_id, avg(sales_amount) from sales_records where MONTH(Sales_date) = '03'group by product_id ;
+2. SELECT p.product_name, sr.product_id,
+SUM(sr.sales_amount) AS total_sales FROM Sales_Records  sr 
+join products p on  sr.product_id= p.product_id GROUP BY sr.product_id order by total_sales desc limit 3;
+3. select distinct sr.customer_id, c.customer_name, percent_rank() over (order by sr.sales_Amount asc), rank () over (order by sr.customer_id asc) from sales_records sr  join customers c on c.customer_id= sr.customer_id ;
+4.WITH TotalSalesByDate AS ( SELECT customer_id,count(record_id) AS frequency FROM sales_records GROUP BY customer_id)SELECT customer_id,frequency,CASE WHEN frequency > 4 THEN 'Consistent' ELSE 'Occassional' END AS buying
+FROM TotalSalesByDate;
+
+5.select t.flight_id,f.departure_airport, f.arrival_airport,avg(t.ticket_price)  from tickets t  join flights f on t.flight_id=f.flight_id group by t.flight_id ;
+6. select f.flight_id, f.departure_date,count(t.ticket_id) as tot from flights f join tickets t on t.flight_id=f.flight_id  where Month(t.ticket_date) = Month(Curdate())-1 group by f.flight_id order by tot desc;
+7. select p.passenger_name ,sum(t.ticket_price) as tot from passengers p join tickets t on t.passenger_id=p.passenger_id group by p.passenger_name order by tot desc limit 5;
+8. select monthname(ticket_date) as months , count(ticket_id) as counts from tickets group by months order by counts desc;
+
+
+9.select player_id,count(game_id) as cts from playerscores group by player_id order by cts;
+10. select g.game_id, g.game_name, count(ps.player_id) as c  from playerscores ps join games g on g.game_id= ps.game_id group by g.game_id order by c desc limit 3 ;
+11.select  g.game_id,  g.game_name,avg(ps.score) as average_score, max(ps.score) as high_Score,count(ps.player_id) as no_of_players from playerscores ps join games g on g.game_id= ps.game_id group by g.game_id order by no_of_players desc ;
+12.
+
+
+13.select d.doctor_id, d.doctor_name, sum(t.cost) as costs from doctors d join treatments t on t.doctor_id=d.doctor_id group by doctor_id order by costs desc limit 5;
+14.select treatment_name, cost , cume_dist() over( order by cost desc) from treatments t; 
+15. 
+
+16.select gender,diagnosis,round(avg(datediff(discharge_date,admission_date)),2) from patients group by gender,diagnosis;
+
+
+
+17. select c. department,e.semester, avg(e.grade) from enrollments e join courses c on c.course_id=e.course_id group by c.department, e.semester;
+18. select major, count(student_id) as cts, enrollment_year from students group by student_id order by cts desc ;
+19. select e.semester,  s.student_id, s.student_name,sum(c.credits)  as cts
+from courses c join enrollments e on c.course_id=e.course_id 
+join students s on e.student_id=s.student_id  group by  s.student_id,e.semester order by cts desc ;
+20.CREATE or REPLACE VIEW fin20 AS
+SELECT s.enrollment_year, count(s.student_id) as cts,c.course_name
+FROM courses c
+join enrollments e on c.course_id=e.course_id 
+join students s on e.student_id=s.student_id  group by s.enrollment_year, c.course_name ;
+select * from fin20;
+
+select enrollment_year, cts,course_name , dense_rank() over(partition by enrollment_year order by cts desc) from fin20;
+
